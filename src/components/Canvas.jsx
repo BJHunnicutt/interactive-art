@@ -1,6 +1,8 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 
+import ProjectSelector from './Projects/ProjectSelector'
+
 const Canvas = props => {
 	// const player = PlayerAPI.get(parseInt(props.match.params.number, 10))
 	// if (!player) {
@@ -8,8 +10,9 @@ const Canvas = props => {
 	// }
 	return (
 		<div>
-			<h1>{props.match.params.number}</h1>
+			<h1>{props.match.params.project}</h1>
 			<Link to="/canvas">Back</Link>
+			<ProjectSelector project={props.match.params.project} />
 		</div>
 	)
 }

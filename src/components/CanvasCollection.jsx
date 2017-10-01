@@ -8,7 +8,7 @@ import Canvas from './Canvas'
 const CanvasCollection = () => (
 	<Switch>
 		<Route exact path="/canvas" component={AllCanvases} />
-		<Route path="/canvas/:number" component={Canvas} />
+		<Route path="/canvas/:project" component={Canvas} />
 	</Switch>
 )
 
