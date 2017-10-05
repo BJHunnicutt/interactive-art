@@ -22,6 +22,7 @@ const CameraTest = () => {
 			return on ? p.createCapture(p.VIDEO) : null
 		}
 
+		// Trying to turn off the camera, but chrome has a bug where stop() doesn't work...
 		p.mouseClicked = () => {
 			p.toggleVideo()
 			capture.stop()
@@ -99,7 +100,7 @@ const CameraTest = () => {
 				if (anotherLastPoint) {
 					const dist = anotherLastPoint.dist(brightest)
 					if (dist > 30) {
-						//                brightest = anotherLastPoint;
+						// brightest = anotherLastPoint;
 					}
 				}
 

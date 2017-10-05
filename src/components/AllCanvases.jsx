@@ -8,7 +8,7 @@ import ProjectCard from './ProjectCard'
 const AllCanvases = () => (
 	<div>
 		<ul>
-			{['P5Test', 'ThreeTest', 'CameraTest'].map(p => (
+			{['P5Test', 'ThreeTest', 'CameraTest', 'PixelMotion'].map(p => (
 				<li key={p}>
 					<Link to={`/canvas/${p}`}>
 						<ProjectCard name={`${p}-name`} />
