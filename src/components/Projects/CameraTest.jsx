@@ -88,12 +88,12 @@ const CameraTest = () => {
 			capture.loadPixels()
 			if (capture.pixels.length > 0) {
 				// don't forget this!
-				const brightest = p.findBrightest(capture)
+				let brightest = p.findBrightest(capture)
 
 				// first step to try: uncomment the line below to enable smoothing
 				// const smoothingAmount = p.select('#smoothingAmount').value() / 100.0
 				const smoothingAmount = 50 / 100.0
-				//        brightest = smoothPoint(brightest, smoothingAmount);
+				brightest = p.smoothPoint(brightest, smoothingAmount)
 
 				// next step to try: ignore points that are too far from current point
 				if (anotherLastPoint) {

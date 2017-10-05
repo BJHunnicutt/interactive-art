@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { func, string } from 'prop-types'
 
 import p5 from 'p5'
-import 'p5/lib/addons/p5.sound'
+// import 'p5/lib/addons/p5.sound'
 import 'p5/lib/addons/p5.dom'
 
 class P5Component extends Component {
