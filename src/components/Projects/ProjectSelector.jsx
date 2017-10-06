@@ -3,6 +3,7 @@ import React from 'react'
 import P5Test from './P5test'
 import CameraTest from './CameraTest'
 import PixelMotion from './PixelMotion'
+import Ghosty from './Ghosty'
 
 const ProjectSelector = props => {
 	switch (props.project) {
@@ -14,6 +15,8 @@ const ProjectSelector = props => {
 			return <CameraTest />
 		case 'PixelMotion':
 			return <PixelMotion />
+		case 'Ghosty':
+			return <Ghosty />
 		default:
 			return null
 	}
