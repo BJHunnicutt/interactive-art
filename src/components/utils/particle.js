@@ -14,6 +14,7 @@ const ParticleSystem = function(p, num, v, img_) {
 	this.particles = []
 	this.origin = v.copy() // we make sure to copy the vector value in case we accidentally mutate the original by accident
 	this.img = img_
+
 	for (var i = 0; i < num; ++i) {
 		this.particles.push(new Particle(this.origin, this.img))
 	}
@@ -48,6 +49,7 @@ ParticleSystem.prototype.run = function() {
  */
 ParticleSystem.prototype.applyForce = function(dir) {
 	var len = this.particles.length
+	// console.log('len', len)
 	for (var i = 0; i < len; ++i) {
 		this.particles[i].applyForce(dir)
 	}
@@ -93,7 +95,9 @@ Particle.prototype.run = function() {
  */
 Particle.prototype.render = function() {
 	this.p.imageMode(this.p.CENTER)
-	this.p.tint(255, this.lifespan)
+	// Added '2 * ' below and dounbled the rate that the lifespan is decreased on
+	// Update() so that there are few particles
+	this.p.tint(255, 2 * this.lifespan)
 	this.p.image(this.texture, this.loc.x, this.loc.y)
 }
 
@@ -122,7 +126,8 @@ Particle.prototype.isDead = function() {
 Particle.prototype.update = function() {
 	this.vel.add(this.acc)
 	this.loc.add(this.vel)
-	this.lifespan -= 2.5
+	// this.lifespan -= 2.5
+	this.lifespan -= 7.5
 	this.acc.mult(0)
 }
 

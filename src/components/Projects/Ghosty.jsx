@@ -34,89 +34,126 @@ const Ghosty = () => {
 			ps = new ParticleSystem(
 				p,
 				0,
-				p.createVector(width / 2, height - 60),
+				p.createVector(width / 2, height - 160),
 				particle_texture
 			)
+			// direction of the vector
+			const dx = p.map(p.mouseX, 0, width, -0.2, 0.2)
+			// The vector determines the speed the particles move as well as direction
+			// i.e. bigger number => move faster, then the x/y vector determines direction
+			// - if the vector changes, do this in draw()
+			p.wind = p.createVector(-1, 0.5)
 
-			// capture = p.createCapture(p.VIDEO)
-			// capture.size(width, height)
-			// capture.hide()
-			//
-			// flow = new FlowCalculator(step)
+			// -------- For directional lines ---------
+			capture = p.createCapture(p.VIDEO)
+			capture.size(width, height)
+			p.pixelDensity(1) // To deal with variable display resolutions
+			capture.hide()
+
+			flow = new FlowCalculator(step)
 		}
 
 		p.draw = () => {
 			p.background(0)
 
-			const dx = p.map(p.mouseX, 0, width, -0.2, 0.2)
-			const wind = p.createVector(dx, 0)
+			// ------------- For directional lines -------------
+			capture.loadPixels()
 
-			ps.applyForce(wind)
+			// for (var y = 0; y < capture.height; y++) {
+			// 	for (var x = 0; x < capture.width; x++) {
+			// 		var index = (x + y * capture.width) * 4
+			// 		capture.pixels[index + 0] = x
+			// 		capture.pixels[index + 1] = p.random(255)
+			// 		capture.pixels[index + 2] = y
+			// 		capture.pixels[index + 3] = 255
+			// 	}
+			// }
+			// capture.updatePixels()
+
+			// console.log(capture.pixels.length)
+			if (capture.pixels.length > 0) {
+				if (previousPixels) {
+					// cheap way to ignore duplicate frames
+					if (same(previousPixels, capture.pixels, 4, width)) {
+						return
+					}
+
+					flow.calculate(
+						previousPixels,
+						capture.pixels,
+						capture.width,
+						capture.height
+					)
+				}
+				previousPixels = copyImage(capture.pixels, previousPixels)
+
+				// make a background image that covers old motion lines
+				// const coverOldLines = p.createCanvas(width, height)
+				// coverOldLines.background(0)
+				// p.image(coverOldLines, 0, 0, width, height)
+				// p.image(capture, 0, 0, width, height)
+
+				if (flow.flow && flow.flow.u !== 0 && flow.flow.v !== 0) {
+					p.strokeWeight(2)
+					flow.flow.zones.forEach(function(zone) {
+						// Set the color stroke(r,g,b) based on the direction of flow
+						p.stroke(
+							p.map(zone.u, -step, +step, 0, 255),
+							p.map(zone.v, -step, +step, 0, 255),
+							128
+						)
+						// Draw the line in the direction of flow
+						// * Real orientation
+						// p.line(zone.x, zone.y, zone.x + zone.u, zone.y + zone.v)
+						// OR
+						// * MIRROR orientation (just switch x to width-x+1)
+						p.line(
+							capture.width - zone.x + 1,
+							zone.y,
+							capture.width - zone.x + 1 + zone.u,
+							zone.y + zone.v
+						)
+
+						// COOL ellipses (Mirrored)
+						// p.ellipse(capture.width - zone.x + 1, zone.y, zone.u, zone.v)
+					})
+				}
+
+				p.noFill()
+				p.stroke(255)
+			} // end drawing pixels
+
+			// ------------- For ghosty -------------
+
+			// const dx = p.map(p.mouseX, 0, width, -0.2, 0.2)
+			// const wind = p.createVector(dx, 0.2)
+
+			ps.applyForce(p.wind)
 			ps.run()
-			for (let i = 0; i < 2; i++) {
-				ps.addParticle()
-			}
+			ps.addParticle()
+
+			p.frameRate(20)
 
 			// Draw an arrow representing the wind force
-			p.drawVector(wind, p.createVector(width / 2, 50, 0), 500)
-
-			// capture.loadPixels()
-			// if (capture.pixels.length > 0) {
-			// 	if (previousPixels) {
-			// 		// cheap way to ignore duplicate frames
-			// 		if (same(previousPixels, capture.pixels, 4, width)) {
-			// 			return
-			// 		}
-			//
-			// 		flow.calculate(
-			// 			previousPixels,
-			// 			capture.pixels,
-			// 			capture.width,
-			// 			capture.height
-			// 		)
-			// 	}
-			// 	previousPixels = copyImage(capture.pixels, previousPixels)
-			//
-			// 	// make a background image that covers old motion lines
-			// 	const coverOldLines = p.createCanvas(width, height)
-			// 	coverOldLines.background(0, 0, 0)
-			// 	p.image(coverOldLines, 0, 0, width, height)
-			// 	// p.image(capture, 0, 0, width, height);
-			//
-			// 	if (flow.flow && flow.flow.u !== 0 && flow.flow.v !== 0) {
-			// 		p.strokeWeight(2)
-			// 		flow.flow.zones.forEach(function(zone) {
-			// 			p.stroke(
-			// 				p.map(zone.u, -step, +step, 0, 255),
-			// 				p.map(zone.v, -step, +step, 0, 255),
-			// 				128
-			// 			)
-			// 			p.line(zone.x, zone.y, zone.x + zone.u, zone.y + zone.v)
-			// 			// p.ellipse(zone.x, zone.y, 5, 5)
-			// 		})
-			// 	}
-			//
-			// 	p.noFill()
-			// 	p.stroke(255)
-			// }
+			// p.drawVector(wind, p.createVector(width / 2, 50, 0), 500)
 		} // close draw()
 
 		/**
 		 *  This function draws an arrow showing the direction the "wind" is blowing.
 		 */
-		p.drawVector = (v, loc, scale) => {
-			p.push()
-			const arrowsize = 4
-			p.translate(loc.x, loc.y)
-			p.stroke(255)
-			p.rotate(v.heading())
-
-			const len = v.mag() * scale
-			p.line(0, 0, len, 0)
-			p.line(len, 0, len - arrowsize, +arrowsize / 2)
-			p.line(len, 0, len - arrowsize, -arrowsize / 2)
-			p.pop()
-		}
+		// p.drawVector = (v, loc, scale) => {
+		// 	p.push()
+		// 	const arrowsize = 4
+		// 	p.translate(loc.x, loc.y)
+		// 	p.stroke(255)
+		// 	p.rotate(v.heading())
+		//
+		// 	const len = v.mag() * scale
+		// 	p.line(0, 0, len, 0)
+		// 	p.line(len, 0, len - arrowsize, +arrowsize / 2)
+		// 	p.line(len, 0, len - arrowsize, -arrowsize / 2)
+		// 	p.pop()
+		// }
 	} // Close sketch()
 
 	return <P5Component id={name} sketch={sketch} />

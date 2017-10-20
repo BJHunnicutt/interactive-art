@@ -26,6 +26,9 @@ const PixelMotion = () => {
 			flow = new FlowCalculator(step)
 			uMotionGraph = new Graph(p, 100, -step / 2, +step / 2)
 			vMotionGraph = new Graph(p, 100, -step / 2, +step / 2)
+
+			// So that the pixels aren't dependent on screen resolution / SO MUCH FASTER
+			p.pixelDensity(1)
 		}
 
 		p.draw = () => {
