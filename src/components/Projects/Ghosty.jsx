@@ -16,11 +16,11 @@ const Ghosty = () => {
 		let flow
 		const width = 640
 		const height = 480
-		const step = 8
+		const step = 40 // Determines the number of pixels (8 is highish but still fast)
 
 		// texture for the particle
 		let particle_texture = null
-		// variable for particle system
+		// variable for particle system (Whisp)
 		let ps = null
 
 		p.preload = () => {
@@ -30,13 +30,14 @@ const Ghosty = () => {
 		p.setup = () => {
 			p.createCanvas(width, height)
 
-			//initialize the particle system
+			// // initialize the particle system
 			ps = new ParticleSystem(
 				p,
 				0,
 				p.createVector(width / 2, height - 160),
 				particle_texture
 			)
+
 			// direction of the vector
 			const dx = p.map(p.mouseX, 0, width, -0.2, 0.2)
 			// The vector determines the speed the particles move as well as direction
@@ -47,12 +48,13 @@ const Ghosty = () => {
 			// -------- For directional lines ---------
 			capture = p.createCapture(p.VIDEO)
 			capture.size(width, height)
-			p.pixelDensity(1) // To deal with variable display resolutions
+			p.pixelDensity(1) // To deal with variable display resolutions <--  Makes it much faster on retina display
 			capture.hide()
 
 			flow = new FlowCalculator(step)
 		}
 
+		// Draw the canvas
 		p.draw = () => {
 			p.background(0)
 
@@ -70,7 +72,7 @@ const Ghosty = () => {
 			// }
 			// capture.updatePixels()
 
-			// console.log(capture.pixels.length)
+			// Draw the motion directed lines
 			if (capture.pixels.length > 0) {
 				if (previousPixels) {
 					// cheap way to ignore duplicate frames
@@ -94,8 +96,32 @@ const Ghosty = () => {
 				// p.image(capture, 0, 0, width, height)
 
 				if (flow.flow && flow.flow.u !== 0 && flow.flow.v !== 0) {
+					/*
+					 * Create the Whisps
+					 */
 					p.strokeWeight(2)
 					flow.flow.zones.forEach(function(zone) {
+						// Set the position of each whisp
+						ps.origin.x = zone.x + step
+						ps.origin.y = zone.y + step
+						// Set the direction of each whisp
+						ps.applyForce(
+							p.createVector(
+								capture.width -
+									zone.x +
+									1 +
+									zone.u -
+									(capture.width - zone.x + 1),
+								zone.y + zone.v - zone.y
+							)
+						)
+						// create each whisp
+						ps.run()
+						ps.addParticle()
+
+						/*
+						 * Create the lines
+						 */
 						// Set the color stroke(r,g,b) based on the direction of flow
 						p.stroke(
 							p.map(zone.u, -step, +step, 0, 255),
@@ -114,7 +140,7 @@ const Ghosty = () => {
 							zone.y + zone.v
 						)
 
-						// COOL ellipses (Mirrored)
+						// COOL ellipses (Mirrored) <-- To be used instead of p.line()
 						// p.ellipse(capture.width - zone.x + 1, zone.y, zone.u, zone.v)
 					})
 				}
