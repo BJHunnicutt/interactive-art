@@ -12,7 +12,7 @@ class App extends Component {
 			<div className="App">
 				<header className="App-header">
 					<img src={logo} className="App-logo" alt="logo" />
-					<h2>interactive Art</h2>
+					<h2>Playing with Interaction</h2>
 					<nav>
 						<NavLink exact to="/">
 							Home
