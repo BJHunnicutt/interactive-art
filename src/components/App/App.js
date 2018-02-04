@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
-import { NavLink } from 'react-router-dom'
+import { NavLink, Switch, Route } from 'react-router-dom'
+import ProjectContainer from '../ProjectContainer'
+import Homepage from '../Homepage'
 
 import logo from './swift.png'
-
-import Main from '../Main'
 import './App.css'
 
 class App extends Component {
@@ -17,10 +17,14 @@ class App extends Component {
 						<NavLink exact to="/">
 							Home
 						</NavLink>
-						<NavLink to="/canvas">Projects</NavLink>
 					</nav>
 				</header>
-				<Main />
+				<main>
+					<Switch>
+						<Route exact path="/" component={Homepage} />
+						<Route path="/:project" component={ProjectContainer} />
+					</Switch>
+				</main>
 			</div>
 		)
 	}

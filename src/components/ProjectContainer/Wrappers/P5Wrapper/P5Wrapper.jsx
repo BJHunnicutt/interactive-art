@@ -5,7 +5,7 @@ import p5 from 'p5'
 // import 'p5/lib/addons/p5.sound'
 import 'p5/lib/addons/p5.dom'
 
-class P5Component extends Component {
+class P5Wrapper extends Component {
 	static propTypes = {
 		id: string,
 		sketch: func
@@ -34,4 +34,4 @@ class P5Component extends Component {
 	}
 }
 
-export default P5Component
+export default P5Wrapper

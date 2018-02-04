@@ -1,8 +1,8 @@
 import React from 'react'
 
-import P5Component from '../P5Component'
-import { copyImage, same, Graph } from '../utils/p5-utils'
-import FlowCalculator from '../utils/flow'
+import P5Wrapper from '../Wrappers/P5Wrapper'
+import { copyImage, same, Graph } from 'utils/p5-utils'
+import FlowCalculator from 'utils/flow'
 
 const PixelMotion = () => {
 	const name = 'pixel-flow'
@@ -90,7 +90,7 @@ const PixelMotion = () => {
 		}
 	} // Close sketch()
 
-	return <P5Component id={name} sketch={sketch} />
+	return <P5Wrapper id={name} sketch={sketch} />
 }
 
 export default PixelMotion

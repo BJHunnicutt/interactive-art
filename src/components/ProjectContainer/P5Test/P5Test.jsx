@@ -1,6 +1,6 @@
 import React from 'react'
 
-import P5Component from '../P5Component'
+import P5Wrapper from '../Wrappers/P5Wrapper'
 
 const P5Test = () => {
 	const name = 'p5-test'
@@ -39,7 +39,7 @@ const P5Test = () => {
 			p.draw()
 		}
 
-		// TODO: Move this into P5Component
+		// TODO: Move this into P5Wrapper
 		p.windowResized = () => {
 			console.log('sketch window resize:', window.innerWidth)
 			p.resizeCanvas(window.innerWidth, window.innerHeight, p.noRedraw)
@@ -47,7 +47,7 @@ const P5Test = () => {
 		}
 	} // Close sketch()
 
-	return <P5Component id={name} sketch={sketch} />
+	return <P5Wrapper id={name} sketch={sketch} />
 }
 
 export default P5Test
